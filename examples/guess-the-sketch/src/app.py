@@ -20,8 +20,8 @@ import random
 import requests
 import json
 import base64
+import shutil
 import os
-import threading
 import vertexai
 import urllib
 from vertexai.preview.vision_models import ImageGenerationModel
@@ -33,11 +33,6 @@ LOCATION = "asia-northeast3"  # @param {type:"string"}
 vertexai.init(project=PROJECT_ID, location=LOCATION)
 
 DB_DIR = "/tmp/db"
-
-# Use whatever the GenAI API is routing to (default Vertex)
-IMAGE_GENERATION_ENDPOINT="http://genai-api.genai.svc/genai/image"
-EMBEDDINGS_ENDPOINT="http://embeddings-api.genai.svc/"
-EMBEDDINGS_MODEL="sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
 
 app = Flask(__name__,
             static_folder="static")
@@ -54,9 +49,8 @@ logger.debug('gameserver started')
 @app.route('/')
 def index():
     player_id = request.args.get('playerId')
-    player_dir = os.path.join(DB_DIR, player_id)
-    if os.path.exists(player_dir):
-        os.rmdir(player_dir)
+    player_dir = os.path.join(DB_DIR, f"p{player_id}")
+    shutil.rmtree(player_dir, ignore_errors=True)
 
     return render_template('index.html')
 
@@ -101,9 +95,11 @@ def send_prompt():
     # print(type(response.images[0]))
 
     player_dir = os.path.join(DB_DIR, f"p{player_id}")
+    time.sleep(5)
 
     # dummy - save image
     local_path = os.path.join(player_dir, f"{index}.png")
+    print(player_dir)
     urllib.request.urlretrieve("https://cloud.google.com/static/vertex-ai/generative-ai/docs/image/images/sample_generate-image-from-text_bulldog.png", local_path)
 
     # generate embedding and save prompt as json file
@@ -122,6 +118,28 @@ def send_prompt():
         json.dump(json_dict, f, ensure_ascii=False)
 
     return jsonify(result="success")
+
+# POST is-opponent-done-generation
+@app.route('/done-generation')
+def is_opponent_done_generation():
+    cnt = 0
+
+    for player_id in [1, 2]:
+        player_dir = os.path.join(DB_DIR, f"p{player_id}")
+        cnt += len(os.listdir(player_dir))
+
+    if cnt == 12:
+        done = True
+    else:
+        done = False
+
+    return jsonify(done=done)
+
+# GET guess
+@app.route('/guess')
+def guess():
+    player_id = request.args.get('playerId')
+    return render_template('guess.html', playerId=player_id)
 
 
 LIMITED_PROMPTS = os.environ.get("LIMITED_PROMPTS", "false")
@@ -266,5 +284,4 @@ logger.debug('LIMITED_PROMPTS: %s', LIMITED_PROMPTS)
 #    return sum(i[0] * i[1] for i in zip(v1, v2))
 
 if __name__ == '__main__':
-    # socketio.run(app, debug=True, host='0.0.0.0', port=7654)
     app.run(debug=True, host='0.0.0.0', port=7654)

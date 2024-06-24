@@ -53,7 +53,7 @@ limitations under the License.
   <body>
     <div class="loader hidden" id="minjkang-loader">
       <img src="/static/imgs/drawing.gif" alt="pencil drawing" />
-      <p>Generating...</p>
+      <p></p>
     </div>
 
     <main id="maincontent">
@@ -71,7 +71,7 @@ limitations under the License.
         <!-- hero -->
         <div class="hero">
           <a class="hero__exit" href="/index.html" id="exitGame">
-            종료하기
+            Exit game
             <img src="/static/imgs/exit.svg" alt="exit icon" />
           </a>
           <img
@@ -89,8 +89,8 @@ limitations under the License.
           <input type="hidden" id="generation-done" value="n"/>
           <div class="prompts__header">
             <span>Step 1:</span>
-            <p><Imagen에게 스케치 생성을 요청할 프롬프트를 입력하세요.<br>
-               프롬프트에 개인정보 등의 민감 정보를 포함하지 않도록 주의해주세요.
+            <p>Use prompts to create your own AI sketches.<br>
+               Do not enter any confidential, sensitive or personal information.
             </p>
           </div>
           <form class="prompts__caption" id="caption1">
@@ -102,7 +102,7 @@ limitations under the License.
               <input
                 id="prompt1"
                 type="text"
-                placeholder="맑은날 바닷가를 산책하는 골든 리트리버"
+                placeholder="A fantasy world with enchanted forests, towering castles, and mythical creatures"
                 required
               />
               <p class="error-message hidden">
@@ -112,7 +112,7 @@ limitations under the License.
               </p>
             </div>
             <div class="prompts__caption-submit">
-              <button type="button" aria-label="Submit" class="button" disabled>
+              <button type="submit" aria-label="Submit" class="button" disabled>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -129,7 +129,7 @@ limitations under the License.
               </button>
             </div>
             <p class="prompts__caption-note">
-              * 생성된 이미지와 프롬프트가 상이할 수 있습니다.
+              Note: Once you submit the prompt it can no longer be edited.
             </p>
           </form>
           <form class="prompts__caption" id="caption2" disabled>
@@ -141,7 +141,7 @@ limitations under the License.
               <input
                 id="prompt2"
                 type="text"
-                placeholder="노란색 테이블 위 사과와 쿠키 사진"
+                placeholder="Cityscape featuring a bustling, futuristic metropolis with towering skyscrapers"
                 required
                 disabled
               />
@@ -152,7 +152,7 @@ limitations under the License.
               </p>
             </div>
             <div class="prompts__caption-submit">
-              <button type="button" aria-label="Submit" class="button" disabled>
+              <button type="submit" aria-label="Submit" class="button" disabled>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -169,7 +169,7 @@ limitations under the License.
               </button>
             </div>
             <p class="prompts__caption-note hidden">
-              * 생성된 이미지와 프롬프트가 상이할 수 있습니다.
+              Note: Once you submit the prompt it can no longer be edited.
             </p>
           </form>
           <form class="prompts__caption" id="caption3" disabled>
@@ -181,7 +181,7 @@ limitations under the License.
               <input
                 id="prompt3"
                 type="text"
-                placeholder="해바라기 수채화, 바스키아 스타일"
+                placeholder="Sunset casting a warm glow over an ancient metropolis"
                 required
                 disabled
               />
@@ -192,7 +192,7 @@ limitations under the License.
               </p>
             </div>
             <div class="prompts__caption-submit">
-              <button type="button" aria-label="Submit" class="button" disabled>
+              <button type="submit" aria-label="Submit" class="button" disabled>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
