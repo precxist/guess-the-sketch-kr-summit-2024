@@ -1,0 +1,112 @@
+# Copyright 2024 Google LLC All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: npc-chat-api
+  labels:
+    name: npc-chat-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 40%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      name: npc-chat-api
+  template:
+    metadata:
+      labels:
+        name: npc-chat-api
+        version: stable
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "genai-instrumentation"
+    spec:
+      serviceAccountName: k8s-sa-aiplatform
+      restartPolicy: Always
+      containers:
+      - image: npc-chat-api
+        name: npc-chat-api
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: http-front
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5
+        # livenessProbe:
+        #   tcpSocket:
+        #     port: http-front
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5
+        env:
+        - name: ENV
+          value: dev
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config/config.toml
+          subPath: "config.toml"
+        - name: world-volume
+          mountPath: /config/world.toml
+          subPath: "world.toml"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: npc-config
+      - name: world-volume
+        configMap:
+          name: world-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: npc-chat-api
+  name: npc-chat-api
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    name: npc-chat-api
+  sessionAffinity: None
+  type: ClusterIP
+# ---
+# apiVersion: autoscaling/v1
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: npc-chat-api
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: npc-chat-api
+#   minReplicas: 5
+#   maxReplicas: 30
+#   targetCPUUtilizationPercentage: 50

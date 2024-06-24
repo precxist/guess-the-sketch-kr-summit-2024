@@ -1,0 +1,13 @@
+services:
+  gts:
+    container_name: gts
+    image: "gts:latest"
+    build: .
+    ports:
+      - "80:7654"
+    volumes:
+      - ./src:/workspace/frontend
+      - /home/minjkang/.config/gcloud:/root/.config/gcloud
+    restart: unless-stopped
+    
+    

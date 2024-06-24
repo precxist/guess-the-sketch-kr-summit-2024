@@ -1,0 +1,70 @@
+# Copyright 2023 Google LLC All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#OpenTelemetry Installation
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: open-telemetry-cfg
+deploy:
+  helm:
+    releases:
+      - name: otel-operator
+        createNamespace: true
+        namespace: "opentelemetry-operator-system"
+        wait: true
+        remoteChart: opentelemetry-operator
+        repo: https://open-telemetry.github.io/opentelemetry-helm-charts
+        valuesFiles: ["./helm_values.yaml"]
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: genai-quickstart-cfg
+requires:
+- configs: ["genai-api-cfg"]
+  path: ./api/genai_api/skaffold.yaml
+
+- configs: ["stable-diffusion-api-cfg"]
+  path: ./api/stable_diffusion_api/skaffold.yaml
+
+- configs: ["vertex-gemini-api-cfg"]
+  path: ./api/vertex_gemini_api/skaffold.yaml
+
+- configs: ["vertex-chat-api-cfg"]
+  path: ./api/vertex_chat_api/skaffold.yaml
+
+- configs: ["vertex-code-api-cfg"]
+  path: ./api/vertex_code_api/skaffold.yaml
+
+- configs: ["vertex-image-api-cfg"]
+  path: ./api/vertex_image_api/skaffold.yaml
+
+- configs: ["vertex-text-api-cfg"]
+  path: ./api/vertex_text_api/skaffold.yaml
+
+- configs: ["stable-diffusion-endpt-cfg"]
+  path: ./image/stable_diffusion/skaffold.yaml
+
+- configs: ["embeddings-api-cfg"]
+  path: ./language/embeddings/skaffold.yaml
+
+- configs: ["huggingface-tgi-endpt-cfg"]
+  path: ./language/huggingface_tgi/skaffold.yaml
+
+- configs: ["npc-chat-api-cfg"]
+  path: ./api/npc_chat_api/skaffold.yaml
+
+- configs: ["api-caller-build"]
+  path: ./api_caller/skaffold.yaml

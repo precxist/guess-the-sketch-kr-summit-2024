@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vertex-image-api-imagen-2
+  labels:
+    name: vertex-image-api-imagen-2
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 40%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      name: vertex-image-api
+      model: imagen-2
+  template:
+    metadata:
+      labels:
+        name: vertex-image-api
+        model: imagen-2
+        version: stable
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "genai-instrumentation"
+    spec:
+      serviceAccountName: k8s-sa-aiplatform
+      restartPolicy: Always
+      containers:
+      - image: vertex-image-api
+        name: vertex-image-api
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: ENV
+          value: dev
+        - name: VERTEX_IMAGE_GENERATION_MODEL
+          value: imagegeneration@005 # Imagen 2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vertex-image-api-imagen-1
+  labels:
+    name: vertex-image-api-imagen-1
+spec:
+  replicas: 0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 40%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      name: vertex-image-api
+      model: imagen-1
+  template:
+    metadata:
+      labels:
+        name: vertex-image-api
+        model: imagen-1
+        version: stable
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "genai-instrumentation"
+    spec:
+      serviceAccountName: k8s-sa-aiplatform
+      restartPolicy: Always
+      containers:
+      - image: vertex-image-api
+        name: vertex-image-api
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: ENV
+          value: dev
+        - name: VERTEX_IMAGE_GENERATION_MODEL
+          value: imagegeneration@002 # Imagen 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: vertex-image-api
+  name: vertex-image-api
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    name: vertex-image-api
+  sessionAffinity: None
+  type: ClusterIP
+# ---
+# apiVersion: autoscaling/v1
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: vertex-image-api
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: vertex-image-api
+#   minReplicas: 5
+#   maxReplicas: 30
+#   targetCPUUtilizationPercentage: 50

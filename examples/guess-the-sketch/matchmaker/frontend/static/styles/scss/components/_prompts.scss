@@ -1,0 +1,242 @@
+.prompts {
+  $self: &;
+  background: var(--color-green-medium);
+  border-radius: 2rem;
+  border: .8rem solid var(--color-black);
+  margin-block-start: .4rem;
+  position: relative;
+  overflow: hidden;
+
+  &.loading {
+    align-items: center;
+    background: var(--color-green);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    padding: 8rem;
+  }
+
+  .loader {
+    background-color: var(--color-green-light);
+  }
+
+  &__header {
+    -webkit-font-smoothing: antialiased;
+    background: var(--color-green-medium);
+    border-start-end-radius: .6rem;
+    border-start-start-radius: .6rem;
+    color: var(--color-white);
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: auto 1fr;
+    padding: 2.4rem 1.6rem;
+
+    p, span {
+      @include font-size(18);
+      font-family: var(--font-jura);
+      font-weight: 700;
+      letter-spacing: .05rem;
+    }
+
+    p {
+      @include font-size(18);
+      color: var(--color-white);
+      font-family: var(--font-jura);
+      font-weight: 700;
+      letter-spacing: .05rem;
+      letter-spacing: .05rem;
+    }
+  }
+
+  &__caption {
+    --prompt-bg: var(--color-green);
+    --prompt-brd: var(--color-green-medium);
+    --prompt-text: var(--color-green-medium);
+    --prompt-brd-inbetween: var(--color-green-light);
+    --prompt-button-bg: var(--color-yellow);
+    --prompt-button-text: var(--color-black);
+    --prompt-button-brd: var(--color-green-medium);
+    align-items: center;
+    background: var(--prompt-bg);
+    padding: 2.4rem 1.6rem;
+    display: grid;
+    grid-column-gap: var(--spacing-2);
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+    'input submit'
+    'note note';
+    inline-size: 100%;
+    text-align: center;
+
+    &.error {
+      --prompt-bg: var(--color-red-light);
+      --prompt-brd: var(--color-red);
+      --prompt-text: var(--color-red);
+      --prompt-brd-inbetween: var(--color-green-light);
+      --prompt-button-bg: var(--color-red-light);
+      --prompt-button-text: var(--color-red);
+      --prompt-button-brd: var(--color-red);
+
+      &:has(input[type="text"][disabled]) {
+        --prompt-button-bg: var(--color-red-light);
+        --prompt-button-text: var(--color-red);
+        --prompt-button-brd: var(--color-red);
+      }
+
+      #{$self}__caption-submit {
+        .button {
+          box-shadow: none;
+        }
+      }
+    }
+
+    & + #{$self}__caption {
+      border-block-start: .1rem solid var(--prompt-brd-inbetween);
+    }
+
+    &:has(input[type="text"][disabled]) {
+      background: var(--color-white);
+      pointer-events: none;
+      grid-column-gap: 2rem;
+      --prompt-button-bg: var(--color-white);
+      --prompt-button-text: var(--color-green-medium);
+      --prompt-button-brd: var(--color-green-light);
+
+      #{$self}__caption-input {
+        background: var(--prompt-button-bg);
+        border-color: var(--prompt-button-brd);
+
+        button[id="keyboard"] {
+          opacity: .4;
+        }
+      }
+
+      #{$self}__caption-submit {
+        .button {
+          box-shadow: none;
+        }
+      }
+    }
+
+    &-submit {
+      block-size: 100%;
+      grid-area: submit;
+
+      .button {
+        background: var(--prompt-button-bg);
+        border: .1rem solid var(--prompt-button-brd);
+        color: var(--prompt-button-text);
+        block-size: calc(100% - .4rem);
+        padding-inline: var(--spacing);
+
+        &[disabled] {
+          --prompt-button-bg: var(--color-white);
+          --prompt-button-text: var(--color-green-medium);
+          --prompt-button-brd: var(--color-green-medium);
+          box-shadow: none;
+          opacity: .6;
+
+          .error & {
+            --prompt-button-bg: var(--color-red-light);
+            --prompt-button-text: var(--color-red);
+            --prompt-button-brd: var(--color-red);
+          }
+        }
+
+        img {
+          pointer-events: none;
+        }
+      }
+    }
+
+    &-note {
+      @include font-size(12,16);
+      color: var(--color-white);
+      font-weight: 300;
+      grid-area: note;
+      justify-self: flex-start;
+      margin-block-start: 1.2rem;
+      padding-inline-start: 2.4rem;
+    }
+
+    &-input {
+      background: var(--color-white);
+      border: .1rem solid var(--prompt-brd);
+      border-radius: var(--border-radius-md);
+      color: var(--prompt-text);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      grid-area: input;
+      overflow: hidden;
+      padding: var(--spacing-2) var(--spacing-3);
+      position: relative;
+      text-align: left;
+      transition: all var(--td) var(--tt);
+
+      &.active {
+        &:after {
+          background: var(--prompt-brd);
+          block-size: .8rem;
+          bottom: 0;
+          content:'';
+          inline-size: 100%;
+          left: 0;
+          position: absolute;
+        }
+      }
+
+      button[id="keyboard"] {
+        background: transparent;
+        border-radius: 50%;
+        border: 0;
+        cursor: pointer;
+        position: absolute;
+        right: 1.6rem;
+        top: 50%;
+        transform: translateY(-50%);
+
+        img {
+          pointer-events: none;
+        }
+      }
+
+      input[type="text"] {
+        @include font-size(24, 34);
+        background: transparent;
+        border: 0;
+        color: var(--prompt-text);
+        display: block;
+        font-weight: 500;
+        inline-size: 100%;
+        letter-spacing: .05rem;
+        line-height: 1.5em;
+        padding-inline-end: var(--spacing-6);
+        text-overflow: ellipsis;
+
+        &:focus {
+          outline: none;
+        }
+
+        &::placeholder {
+          color: var(--prompt-text);
+        }
+      }
+
+      .error-message {
+        @include font-size(12,16);
+        color: var(--color-black);
+        font-weight: 500;
+        padding-inline-end: var(--spacing-6);
+      }
+
+      label {
+        @include font-size(12,16);
+        color: var(--prompt-text);
+        pointer-events: none;
+        position: relative;
+        transition: 0.2s ease all;
+      }
+    }
+  }
+}
