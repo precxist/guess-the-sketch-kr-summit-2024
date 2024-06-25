@@ -8,7 +8,6 @@ const loaderContainer = document?.querySelector('.loader-container')
 const prompts = document?.getElementById('prompts')
 const promptsPreCompiled = document?.getElementById('promptsPreCompiled')
 const promptsForms = prompts?.querySelectorAll('form')
-const promptsPreCompiledForms = promptsPreCompiled.querySelectorAll('form')
 // guesses vars
 const guesses = document?.getElementById('guesses')
 const guessesForms = guesses?.querySelectorAll('form')
@@ -214,6 +213,14 @@ if (promptsForms?.length > 0) {
           $("#minjkang-loader").removeClass('hidden');
         },
         complete: function() {
+          $("#generation-done").after('<img id="generatedImg" src="" class="mBox"/>');
+          $("#generatedImg").attr("src", `/sketch?playerId=${playerId}&index=${index + 1}`);
+          $("#generatedImg").attr("title", `${prompt}`);
+          $('.mBox').mBox();
+          $("#generatedImg").trigger( "click" );
+
+          $( "#generatedImg" ).remove();
+
           // hide loader
           $("#minjkang-loader").addClass('hidden');
           if (index < 2){
@@ -228,7 +235,9 @@ if (promptsForms?.length > 0) {
       
           else{
             $("#generation-done").val("y");
-            $('#generation-done').trigger("change");
+            $(".mBox-close").bind('click', function() { 
+              $('#generation-done').trigger("change");
+            });
           }
         },
       });
@@ -237,7 +246,6 @@ if (promptsForms?.length > 0) {
 }
 
 $("#generation-done").change(function(){
-  console.log($("#generation-done").val());
   if ($("#generation-done").val() == 'y'){
     setLoadingStatePrompt('상대방을 기다리는 중입니다...')
 

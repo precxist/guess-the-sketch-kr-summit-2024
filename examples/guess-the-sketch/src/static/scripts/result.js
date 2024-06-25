@@ -77,13 +77,16 @@ $(document).ready(function() {
                 }
 
                 if (currentPlayerScore > opponentPlayerScore){
-                    $("p#currentPlayerResultsText").text("You Won!");
+                    // $("p#currentPlayerResultsText").text("You Won!");
+                    $("p#currentPlayerResultsText").text("승리!");
                 }
                 else if(currentPlayerScore == opponentPlayerScore){
-                    $("p#currentPlayerResultsText").text("It's a Tie!");
+                    // $("p#currentPlayerResultsText").text("It's a Tie!");
+                    $("p#currentPlayerResultsText").text("무승부!");
                 }
                 else{
-                    $("p#currentPlayerResultsText").text("You Lost!");
+                    // $("p#currentPlayerResultsText").text("You Lost!");
+                    $("p#currentPlayerResultsText").text("패배!");
                 }
                 $("span#currentPlayerScore").text(Math.round(currentPlayerScore/3));
                 $("span#opponentPlayerScore").text(Math.round(opponentPlayerScore/3));
