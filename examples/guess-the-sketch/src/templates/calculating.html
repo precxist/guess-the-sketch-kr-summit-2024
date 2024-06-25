@@ -37,9 +37,25 @@ limitations under the License.
     />
     <link rel="shortcut icon" href="/static/favicon.io" />
     <link rel="stylesheet" href="/static/styles/styles.css" />
+    <style>
+        .loader {
+          width: 100%;
+          position: absolute;
+          z-index: 1;
+          background-color: white;
+          opacity: 0.8;
+          border-radius: 0%;
+          height: 120%;
+        }
+    </style>
   </head>
 
   <body>
+    <div class="loader hidden" id="minjkang-loader">
+      <img src="/static/imgs/drawing.gif" alt="pencil drawing" />
+      <p></p>
+    </div>
+
     <main id="maincontent">
       <div style="display: none;" id="getAllMyPrompts"></div>
       <div style="display: none;" id="getAllOpponentPrompts"></div>

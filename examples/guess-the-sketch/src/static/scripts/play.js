@@ -104,20 +104,6 @@ const setLoadingStatePrompt = (text) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// set loading state for when guesses are completed
-const setLoadingStateGuesses = (text) => {
-  // set loading state
-  document.querySelector('body').classList.add('loading')
-  guesses.classList.add('hidden')
-  exitBtn.classList.add('hidden')
-  pageHeroPlayer.classList.add('hidden')
-  loaderContainer.querySelector('p').innerHTML = text
-  loaderContainer.classList.add('loader-container--guesses')
-  loaderContainer.classList.remove('hidden')
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-
 const hideAllPrompts = (values) => {
   prompts?.classList.add('hidden')
   if (promptsForms?.length > 0) {
@@ -224,12 +210,12 @@ if (promptsForms?.length > 0) {
         beforeSend: function() {
           disablePrompt(form);
           // get value
-          $(".loader").find("p").text("이미지 생성중...");
-          $(".loader").removeClass('hidden');
+          $("#minjkang-loader").find("p").text("이미지 생성중...");
+          $("#minjkang-loader").removeClass('hidden');
         },
         complete: function() {
           // hide loader
-          $(".loader").addClass('hidden');
+          $("#minjkang-loader").addClass('hidden');
           if (index < 2){
             const currentForm = $('#caption' + (index+1));
             currentForm.addClass('submitted');
@@ -253,8 +239,7 @@ if (promptsForms?.length > 0) {
 $("#generation-done").change(function(){
   console.log($("#generation-done").val());
   if ($("#generation-done").val() == 'y'){
-    $("#minjkang-loader").find("p").text("Waiting for other player to finish...");
-    $("#minjkang-loader").removeClass('hidden');
+    setLoadingStatePrompt('상대방을 기다리는 중입니다...')
 
     setInterval(function () {
       $.ajax({
@@ -304,245 +289,8 @@ if (guessesForms?.length > 0) {
       }
     })
 
-    // form submit event
-    form?.addEventListener('submit', (e) => {
-      const value = form.querySelector('input[type="text"]').value
-      e.preventDefault()
-      // set current to hidden
-      disableGuess(form)
-      // emit socket message
-      socket.emit('guess', { message: value, opponentId: document.getElementById('opponentId').textContent, round: document.getElementById('round').textContent});
-    })
   })
 }
-
-// socket.on('guess_sketch_response', (data) => {
-//   document.querySelector('body').classList.remove('loading')
-//   loaderContainer.classList.add('hidden')
-//   loaderContainer.classList.remove('loader-container--prompt')
-//   exitBtn.classList.remove('hidden')
-//   pageHeroPlayer.classList.remove('hidden')
-//   guesses.classList.remove('hidden')
-
-//   document.getElementById('opponentId').textContent = data.opponentId;
-//   document.getElementById('round').textContent = data.round;
-//   const formId = 'guess' + data.round;
-//   const guessesImgDiv = document.getElementById(formId).querySelector('.guesses__img');
-//   const guessImage = guessesImgDiv.querySelector('img');
-//   guessesImgDiv.style.width = 'auto';  // Example - adjust as needed
-//   guessesImgDiv.style.height = 'auto';  // Optionally maintain aspect ratio
-//   guessesImgDiv.style.margin = '0 auto';  // Center the image
-//   guessImage.src = 'data:image/jpeg;base64,' + data.image;
-
-//   // polulate the prompt image for opponent
-//   const promptDivId = 'opponentPlayerPrompt' + data.round;
-//   const promptImgDivId = 'opponentPlayerPromptImg' + data.round;
-//   const promptDiv = document.getElementById(promptDivId);
-//   const promptImgDiv = document.getElementById(promptImgDivId);
-
-//   promptDiv.textContent = data.prompt;
-//   promptImgDiv.style.width = 'auto';  // Example - adjust as needed
-//   promptImgDiv.style.height = 'auto';  // Optionally maintain aspect ratio
-//   promptImgDiv.style.margin = '0 auto';  // Center the image
-//   promptImgDiv.src = 'data:image/jpeg;base64,' + data.image;
-//   if (data.round === 3) {
-//     document.getElementById('getAllOpponentPrompts').value = 'true';
-//   }
-// });
-
-// socket.on('prompt_response', (data) => {
-//   const promptForm = document.getElementById('caption' + data.round);
-//   const limitedPrompts = document.getElementById('limitedPrompts').textContent;
-//   if (limitedPrompts === 'false') {
-//     if (data.image === "") {
-//       // Failed to generate image, show error message and re-enable form input
-//       const inputField = promptForm.querySelector('input[type="text"]')
-//       const submitBtn = promptForm.querySelector('button[type="submit"]')
-//       const captionNote = promptForm.querySelector('.prompts__caption-note')
-  
-//       promptForm.removeAttribute('disabled')
-//       inputField.removeAttribute('disabled')
-//       submitBtn.removeAttribute('disabled')
-//       captionNote?.classList.remove('hidden')
-  
-//       // Set error state
-//       setErrorState(promptForm.closest('.prompts__caption'))
-//     } else {
-//       // First handle the prompt form state transfer
-//       promptForm.classList.add('submitted');
-//       const nextEl = promptForm.nextElementSibling  
-//       // If next for is not submitted, remove disable
-//       if (nextEl !== null && !nextEl.classList.contains('submitted')) {
-//         enableNextPrompt(nextEl)
-//       } else {
-//         setLoadingStatePrompt('Waiting for other players to finish...')
-//       }
-  
-//       // Then store the prompt image
-//       const promptDivId = 'currentPlayerPrompt' + data.round;
-//       const promptImgDivId = 'currentPlayerPromptImg' + data.round;
-//       const promptDiv = document.getElementById(promptDivId);
-//       const promptImgDiv = document.getElementById(promptImgDivId);
-  
-//       promptDiv.textContent = data.prompt;
-//       promptImgDiv.style.width = 'auto';  // Example - adjust as needed
-//       promptImgDiv.style.height = 'auto';  // Optionally maintain aspect ratio
-//       promptImgDiv.style.margin = '0 auto';  // Center the image
-//       promptImgDiv.src = 'data:image/jpeg;base64,' + data.image;
-//       if (data.round === 3) {
-//         document.getElementById('getAllMyPrompts').value = 'true';
-//       }
-//     }
-//   } else {
-//       // Then store the prompt image
-//       const promptDivId = 'currentPlayerPrompt' + data.round;
-//       const promptImgDivId = 'currentPlayerPromptImg' + data.round;
-//       const promptDiv = document.getElementById(promptDivId);
-//       const promptImgDiv = document.getElementById(promptImgDivId);
-  
-//       promptDiv.textContent = data.prompt;
-//       promptImgDiv.style.width = 'auto';  // Example - adjust as needed
-//       promptImgDiv.style.height = 'auto';  // Optionally maintain aspect ratio
-//       promptImgDiv.style.margin = '0 auto';  // Center the image
-//       promptImgDiv.src = 'data:image/jpeg;base64,' + data.image;
-//       if (data.round === 3) {
-//         document.getElementById('getAllMyPrompts').value = 'true';
-//       }
-//   }
-// });
-
-// socket.on('guess_response', (data) => {
-//   const currentPlayerGuessImgDivId = 'currentPlayerGuessImg' + data.round;
-//   const opponentPlayerGuessImgDivId = 'opponnentPlayerGuessImg' + data.round;
-//   const currentPlayerGuessParagraphDivId = 'currentPlayerGuess' + data.round;
-//   const opponentPlayerGuessParagraphDivId = 'opponnentPlayerGuess' + data.round;
-
-//   let guessImgDiv;
-//   let guessParagraphDiv;
-//   if (data.from === 'myself') {
-//     guessImgDiv = document.getElementById(currentPlayerGuessImgDivId);
-//     guessParagraphDiv = document.getElementById(currentPlayerGuessParagraphDivId);
-//     if (data.round === 3) {
-//       document.getElementById('getAllMyGuesses').value = 'true';
-//     }
-//   } else {
-//     guessImgDiv = document.getElementById(opponentPlayerGuessImgDivId);
-//     guessParagraphDiv = document.getElementById(opponentPlayerGuessParagraphDivId);
-//     if (data.round === 3) {
-//       document.getElementById('getAllOpponentGuesses').value = 'true';
-//     }
-//   }
-
-//   guessParagraphDiv.textContent = data.guess;
-//   guessImgDiv.style.margin = '0 auto';  // Center the image
-//   const limitedPrompts = document.getElementById('limitedPrompts').textContent;
-//   if (limitedPrompts === 'true') {
-//     guessImgDiv.style.width = '450px';  // Example - adjust as needed
-//     guessImgDiv.style.height = '200px';  // Optionally maintain aspect ratio
-//     guessImgDiv.src = '/static/imgs/logo.svg';
-//   } else {
-//     guessImgDiv.style.width = 'auto';  // Example - adjust as needed
-//     guessImgDiv.style.height = 'auto';  // Optionally maintain aspect ratio
-//     guessImgDiv.src = 'data:image/jpeg;base64,' + data.image;
-//   }
-// });
-
-// socket.on('guess_image_generation_response', (data) => {
-//   const guessFormId = 'guess' + data.round;
-//   const guessForm = document.getElementById(guessFormId);
-//   const guessInputForm = document.getElementById('guesses__input' + data.round);
-//   if (data.response === "failure") {
-//     // Set error state
-//     setErrorState(guessInputForm.closest('.guesses__input'))
-//     // Enable the form to allow re-submission
-//     enableGuess(guessForm)
-//   } else {
-//     guessForm.classList.add('hidden');
-//     const nextEl = guessForm.nextElementSibling
-//     if (nextEl !== null && nextEl.classList.contains('hidden')) {
-//       nextEl.classList.remove('hidden')
-//     } else {
-//       // set loading state
-//       setLoadingStateGuesses('Calculating results and waiting for other player ...')
-      
-//       // Wait for all images and scores to be populated on result page
-//       let intervalId = setInterval(checkDivValue, 200)
-//       function checkDivValue() {
-//         const getAllMyPrompts = document.getElementById('getAllMyPrompts').value;
-//         const getAllMyGuesses = document.getElementById('getAllMyGuesses').value;
-//         const getAllMyScores = document.getElementById('getAllMyScores').value;
-//         const getAllOpponentPrompts = document.getElementById('getAllOpponentPrompts').value;
-//         const getAllOpponentGuesses = document.getElementById('getAllOpponentGuesses').value;
-//         const getAllOpponentScores = document.getElementById('getAllOpponentScores').value;
-//         const myTotalScore = document.getElementById('myTotalScore').textContent;
-//         const opponentTotalScore = document.getElementById('opponentTotalScore').textContent;
-      
-//         if (getAllMyPrompts === 'true' && getAllMyGuesses === 'true' && getAllMyScores === 'true' && getAllOpponentPrompts === 'true' && getAllOpponentGuesses === 'true' && getAllOpponentScores === 'true' && myTotalScore !== null && opponentTotalScore !== null) {
-//           if (parseFloat(myTotalScore) > parseFloat(opponentTotalScore)) {
-//             document.getElementById('currentPlayerResultsText').textContent = 'You won!';
-//           } else if (parseFloat(myTotalScore) < parseFloat(opponentTotalScore)) {
-//             document.getElementById('currentPlayerResultsText').textContent = 'You lost!';
-//           } else {
-//             document.getElementById('currentPlayerResultsText').textContent = 'It\'s a tie!';
-//           }
-
-//           document.querySelector('body').classList.remove('loading')
-//           document.querySelector('body').classList.add('has-results')
-//           loaderContainer.classList.add('hidden')
-//           loaderContainer.classList.remove('loader-container--guesses')
-//           exitBtn.classList.remove('hidden')
-//           pageHeroPlayer.classList.remove('hidden')
-//           pageHeroPlayer.style.transition = 'none'
-//           results.classList.remove('hidden')
-
-//           clearInterval(intervalId)
-//         }
-//       }
-//     }
-//   }
-// });
-
-// socket.on('score_response', (data) => {
-//   const currentPlayerGuessPercentageDivId = 'currentPlayerGuessPercentage' + data.round;
-//   const opponentPlayerGuessPercentageDivId = 'opponnentPlayerGuessPercentage' + data.round;
-
-//   let guessPercentDiv;
-//   if (data.from === 'myself') {
-//     guessPercentDiv = document.getElementById(currentPlayerGuessPercentageDivId);
-//   } else {
-//     guessPercentDiv = document.getElementById(opponentPlayerGuessPercentageDivId);
-//   }
-
-//   const constPerctage = Math.round(data.score * 100);
-//   guessPercentDiv.textContent = constPerctage + "%";
-
-//   if (data.from === 'myself') {
-//     if (data.round === 3) {
-//       document.getElementById('getAllMyScores').value = 'true';
-//       let myTotalScore = 0.0;
-//       for (let i = 1; i <= 3; i++) {
-//         const currentPlayerGuessPercentageDivId = 'currentPlayerGuessPercentage' + i;
-//         const currentScoreString = document.getElementById(currentPlayerGuessPercentageDivId).textContent.slice(0, -1);
-//         const currentScore = parseFloat(currentScoreString);
-//         myTotalScore += currentScore;
-//       }
-//       document.getElementById('myTotalScore').textContent = myTotalScore;
-//     }
-//   } else {
-//     if (data.round === 3) {
-//       document.getElementById('getAllOpponentScores').value = 'true';
-//       let opponentTotalScore = 0.0;
-//       for (let i = 1; i <= 3; i++) {
-//         const opponnentPlayerGuessPercentageDivId = 'opponnentPlayerGuessPercentage' + i;
-//         const currentScoreString = document.getElementById(opponnentPlayerGuessPercentageDivId).textContent.slice(0, -1);
-//         const currentScore = parseFloat(currentScoreString);
-//         opponentTotalScore += currentScore;
-//       }
-//       document.getElementById('opponentTotalScore').textContent = opponentTotalScore;
-//     }
-//   }
-// });
-
 
 // init
 $(document).ready(function() {
