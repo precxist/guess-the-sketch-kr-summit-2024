@@ -1,0 +1,267 @@
+<!--
+Copyright 2024 Google LLC All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http: www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Guess the Sketch</title>
+    <meta name="description" content="" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta http-equiv="cleartype" content="on" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="/static/favicon.io" />
+    <link rel="stylesheet" href="/static/styles/styles.css" />
+    <style>
+        .loading .loader-container {
+            background: var(--color-yellow);
+        }
+    </style>
+  </head>
+
+  <body>
+    <main id="maincontent">
+      <div style="display: none;" id="getAllMyPrompts"></div>
+      <div style="display: none;" id="getAllOpponentPrompts"></div>
+      <div style="display: none;" id="getAllMyGuesses"></div>
+      <div style="display: none;" id="getAllOpponentGuesses"></div>
+      <div style="display: none;" id="getAllMyScores"></div>
+      <div style="display: none;" id="getAllOpponentScores"></div>
+      <div style="display: none;" id="myTotalScore"></div>
+      <div style="display: none;" id="opponentTotalScore"></div>
+      <div style="display: none;" id="limitedPrompts"></div>
+
+      <section class="wrapper wrapper-center">
+        <!-- hero -->
+        <div class="hero">
+          <a class="hero__exit" href="/index.html" id="exitGame">
+            종료하기
+            <img src="/static/imgs/exit.svg" alt="exit icon" />
+          </a>
+          <img
+            class="hero__logo"
+            src="/static/imgs/logo.svg"
+            alt="Guess the sketch graphic"
+          />
+          <div class="player-tag">
+            <p id="currentPlayerResultsText">You Win!</p>
+            <span class="currentPlayer">Player {{ current_player }}</span>
+          </div>
+        </div>
+
+        <!-- guesses -->
+        <!-- results -->
+        <div class="results hidden" id="results">
+          <!-- Results opponent -->
+          <div class="results__container results__container--opponent">
+            <div class="results__header">
+                Player {{current_player}}: 평균 <span class="opponentPlayer" id="currentPlayerScore"></span>% 일치
+            </div>
+
+            <div class="results__list">
+              <div class="results__item">
+                <div class="results__item-container">
+                  <div class="results__item-prompt">
+                    <div class="results__item-player">
+                      <span class="currentPlayer" id="opponentPlayer"></span>
+                      프롬프트
+                    </div>
+                    <p id="opponentPlayerPrompt1"></p>
+                  </div>
+                  <img id="opponentPlayerPromptImg1" src="" alt="placeholder"/>
+                  <div class="results__item-guess">
+                    <div class="results__item-player">
+                      <span class="opponentPlayer" id="currentPlayer"></span>
+                      Guess
+                    </div>
+                    <p id="currentPlayerGuess1"></p>
+                  </div>
+                </div>
+                <div class="results__item-match">
+                  <div class="results__item-match-percentage">
+                    <span id="currentPlayerScore1"></span>
+                    일치
+                  </div>
+                </div>
+              </div>
+              <div class="results__item">
+                <div class="results__item-container">
+                  <div class="results__item-prompt">
+                    <div class="results__item-player">
+                      <span class="currentPlayer" id="opponentPlayer"></span>
+                      프롬프트
+                    </div>
+                    <p id="opponentPlayerPrompt2"></p>
+                  </div>
+                  <img id="opponentPlayerPromptImg2" src="" alt="placeholder"/>
+                  <div class="results__item-guess">
+                    <div class="results__item-player">
+                      <span class="opponentPlayer" id="currentPlayer"></span>
+                      Guess
+                    </div>
+                    <p id="currentPlayerGuess2"></p>
+                  </div>
+                </div>
+                <div class="results__item-match">
+                  <div class="results__item-match-percentage">
+                    <span id="currentPlayerScore2"></span>
+                    일치
+                  </div>
+                </div>
+              </div>
+              <div class="results__item">
+                <div class="results__item-container">
+                  <div class="results__item-prompt">
+                    <div class="results__item-player">
+                      <span class="currentPlayer" id="opponentPlayer"></span>
+                      프롬프트
+                    </div>
+                    <p id="opponentPlayerPrompt3"></p>
+                  </div>
+                  <img id="opponentPlayerPromptImg3" src="" alt="placeholder" />
+                  <div class="results__item-guess">
+                    <div class="results__item-player">
+                      <span class="opponentPlayer" id="currentPlayer"></span>
+                      Guess
+                    </div>
+                    <p id="currentPlayerGuess3"></p>
+                  </div>
+                </div>
+                <div class="results__item-match">
+                  <div class="results__item-match-percentage">
+                    <span id="currentPlayerScore3"></span>
+                    일치
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results current player -->
+          <div class="results__container results__container--current">
+            <div class="results__header">
+                Player {{opponent_id}}: 평균 <span class="currentPlayer" id="opponentPlayerScore"></span>% 일치
+            </div>
+
+            <div class="results__list">
+              <div class="results__item">
+                <div class="results__item-container">
+                  <div class="results__item-prompt">
+                    <div class="results__item-player">
+                      <span class="opponentPlayer" id="currentPlayer"></span>
+                      프롬프트
+                    </div>
+                    <p id="currentPlayerPrompt1"></p>
+                  </div>
+                  <img id="currentPlayerPromptImg1" src="" alt="placeholder"/>
+                  <div class="results__item-guess">
+                    <div class="results__item-player">
+                      <span class="currentPlayer" id="opponentPlayer"></span>
+                      Guess
+                    </div>
+                    <p id="opponentPlayerGuess1"></p>
+                  </div>
+                </div>
+                <div class="results__item-match">
+                  <div class="results__item-match-percentage">
+                    <span id="opponentPlayerScore1"></span>
+                    일치
+                  </div>
+                </div>
+              </div>
+              <div class="results__item">
+                <div class="results__item-container">
+                  <div class="results__item-prompt">
+                    <div class="results__item-player">
+                      <span class="opponentPlayer" id="currentPlayer"></span>
+                      프롬프트
+                    </div>
+                    <p id="currentPlayerPrompt2"></p>
+                  </div>
+                  <img id="currentPlayerPromptImg2" src="" alt="placeholder"/>
+                  <div class="results__item-guess">
+                    <div class="results__item-player">
+                      <span class="currentPlayer" id="opponentPlayer"></span>
+                      Guess
+                    </div>
+                    <p id="opponentPlayerGuess2"></p>
+                  </div>
+                </div>
+                <div class="results__item-match">
+                  <div class="results__item-match-percentage">
+                    <span id="opponentPlayerScore2"></span>
+                    일치
+                  </div>
+                </div>
+              </div>
+              <div class="results__item">
+                <div class="results__item-container">
+                  <div class="results__item-prompt">
+                    <div class="results__item-player">
+                      <span class="opponentPlayer" id="currentPlayer"></span>
+                      프롬프트
+                    </div>
+                    <p id="currentPlayerPrompt3"></p>
+                  </div>
+                  <img id="currentPlayerPromptImg3" src="" alt="placeholder"/>
+                  <div class="results__item-guess">
+                    <div class="results__item-player">
+                      <span class="currentPlayer" id="opponentPlayer"></span>
+                      Guess
+                    </div>
+                    <p id="opponentPlayerGuess3"></p>
+                  </div>
+                </div>
+                <div class="results__item-match">
+                  <div class="results__item-match-percentage">
+                    <span id="opponentPlayerScore3"></span>
+                    일치
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- New game button -->
+          <a type="button" href="#" id="playAgain" class="button"> New Game </a>
+        </div>
+        <!-- loader -->
+        <div class="loader-container hidden">
+          <!-- Loading state -->
+          <div class="loader loader--green">
+            <img src="/static/imgs/drawing.gif" alt="pencil drawing" />
+            <p>Sketching and waiting for the other player ...</p>
+          </div>
+        </div>
+      </section>
+      <p class="demo">This is an experimental deployment for demo purposes only</p>
+    </main>
+    <script src="/static/scripts/jquery-3.7.1.min.js"></script>
+    <script src="/static/scripts/result.js"></script>
+  </body>
+</html>

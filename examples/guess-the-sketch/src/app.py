@@ -187,7 +187,7 @@ def submit_guess():
         answer_embedding = answer_dict["embedding"]
         guess_embedding = guess_dict["embedding"]
         score = np.dot(answer_embedding, guess_embedding) / (np.linalg.norm(answer_embedding) * np.linalg.norm(guess_embedding))
-        score = np.rint(score)
+        score = np.rint(score * 100)
 
         guess_dict["score"] = score
         guess_jsonf_path = os.path.join(opponent_dir, f"guess{index+1}.json")
@@ -197,18 +197,71 @@ def submit_guess():
 
     return jsonify(result="success")
 
-
 LIMITED_PROMPTS = os.environ.get("LIMITED_PROMPTS", "false")
 logger.debug('LIMITED_PROMPTS: %s', LIMITED_PROMPTS)
 
-
 @app.route('/result')
 def result():
-    # player_id = request.args.get('playerId')
-    # opponent_id = MATCH_DICT[player_id]
-    sketch1 = f"/sketch?playerId={opponent_id}&index=1"
+    current_player = request.args.get('playerId')
+    opponent_id = MATCH_DICT[current_player]
 
-    return render_template('result.html', sketch1=sketch1)
+    return render_template(
+        'result.html', 
+        current_player=current_player, 
+        opponent_id=opponent_id
+    )
+
+# POST is-opponent-joined
+@app.route('/is-result-ready')
+def is_result_ready():
+    current_player = request.args.get('playerId')
+    players = ['1', '2']
+    guess_cnt = 0
+
+    for player_id in players:
+        player_dir = os.path.join(DB_DIR, f"p{player_id}")
+        guess_cnt += len([fname for fname in os.listdir(player_dir) if "guess" in fname])
+
+    if guess_cnt == 6:
+        ready = True
+
+        result_dict = {}
+
+        for player_id in players:
+            result_dict[player_id] = {}
+            player_dict = result_dict[player_id]
+        
+            for idx in range(3):
+                row = {}
+                player_dir = os.path.join(DB_DIR, f"p{player_id}")
+
+                answer_json_path = os.path.join(player_dir, f"answer{idx+1}.json")
+                with open(answer_json_path, 'r', encoding='UTF-8') as f:
+                    answer = json.load(f)
+                row["prompt"] = answer["prompt"]
+                row["sketch"] = f"/sketch?playerId={player_id}&index={idx+1}"
+                
+                guess_json_path = os.path.join(player_dir, f"guess{idx+1}.json")
+                with open(guess_json_path, 'r', encoding='UTF-8') as f:
+                    guess = json.load(f)
+                row["guess"] = guess["guess"]
+                row["score"] = guess["score"]
+                player_dict[str(idx+1)] = row
+
+        opponent_id = str(MATCH_DICT[current_player])
+        current_player_result = result_dict[current_player]
+        opponent_result = result_dict[opponent_id]
+
+        return jsonify(
+            ready=ready, 
+            current_player=current_player,
+            current_player_result=current_player_result, 
+            opponent_id=opponent_id,
+            opponent_result=opponent_result
+        )
+    else:
+        ready = False
+        return jsonify(ready=ready)
 
 
 # # When player submit the guess
@@ -266,67 +319,6 @@ def result():
 #     # Send the score to both the players,
 #     emit('score_response', {'score': score, 'round': round, 'from': 'myself'}, room=player_id)
 #     emit('score_response', {'score': score, 'round': round, 'from': 'other'}, room=oppontent_id)
-
-# # When player submit the prompt for generating Sketch
-# @socketio.on('prompt')
-# def handle_message(data):
-#     player_id = sid_to_player_id[request.sid]
-#     message = data['message']
-#     round = int(data['round'])
-#     logger.debug('Player %s: Received prompt %s: %s', player_id, str(round), message)
-
-#     # Generate and store the picture for the prompt\
-#     picture_generate_payload = {
-#         'prompt': f'''{message}''',
-#     }
-#     model_response = requests.post(IMAGE_GENERATION_ENDPOINT, headers=headers, json=picture_generate_payload)
-#     # Send an empty image to indicate the picture generation failure
-#     error_handling = not LIMITED_PROMPTS
-#     if model_response.content == b'{}':
-#         emit('prompt_response', {'image': '', 'prompt': message, 'round': round, 'error_handling': error_handling}, room=player_id)
-#         return
-#     encoded_image = base64.b64encode(model_response.content).decode('utf-8')
-#     # Store the prompt and generated picture
-#     if player_prompt.get(player_id) is None:
-#         player_prompt[player_id] = {}
-#     player_prompt[player_id][round] = {
-#         'prompt': message
-#     }
-#     player_prompt[player_id][round]['picture'] = encoded_image
-
-#     # Send the generated picture back to the player, this will be shown in the summary page
-#     emit('prompt_response', {'image': encoded_image, 'prompt': message, 'round': round, 'error_handling': error_handling}, room=player_id)
-    
-#     # Now check whether it's time to send the picture to the opponent for guessing
-#     # The first picture should be displayed if both players have entered all their prompts
-#     # The first picture page should be displayed only if the picture is generated
-#     if round != game_round:
-#         return
-#     logger.debug('Player %s: All prompts received', player_id)
-#     while len(player_prompt) != 2:
-#         time.sleep(0.1)
-#     for player in player_prompt:
-#         if player != player_id:
-#             while len(player_prompt[player]) != game_round:
-#                 time.sleep(0.1)
-#             while 'picture' not in player_prompt[player][1]:
-#                 time.sleep(0.1)
-#             # Send the first picture to the opponent for guessing
-#             emit('guess_sketch_response', {'image': player_prompt[player][1]['picture'], 'prompt': player_prompt[player][1]['prompt'], 'opponentId': player, 'round': 1}, room=player_id)
-
-# def similarity(p1, p2):
-#     '''Calculate dot product distance between two prompts'''
-
-#     resp = requests.post(
-#         url = EMBEDDINGS_ENDPOINT,
-#         headers = {"Content-Type": "application/json"},
-#         json = {'prompts': [p1, p2], 'model': EMBEDDINGS_MODEL},
-#         timeout=1,
-#     )
-#     resp.raise_for_status()
-
-#     embeddings = loads(resp.text)['embeddings']
-#     return dot(embeddings[0], embeddings[1])
 
 
 if __name__ == '__main__':
