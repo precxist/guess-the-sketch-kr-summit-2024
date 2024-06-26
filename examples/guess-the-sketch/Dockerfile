@@ -35,5 +35,5 @@ RUN pip install ./agones
 EXPOSE 7654
 
 # Start the Application
-CMD ["python", "app.py"]
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
+# CMD ["python", "app.py"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]

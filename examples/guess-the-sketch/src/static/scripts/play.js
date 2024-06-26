@@ -212,7 +212,14 @@ if (promptsForms?.length > 0) {
           $("#minjkang-loader").find("p").text("이미지 생성중...");
           $("#minjkang-loader").removeClass('hidden');
         },
-        complete: function() {
+        error: function() {
+          alert('세이프티 필터에 의해 이미지가 차단되었습니다. 가급적 사람 이외에 사물, 동물, 풍경 등의 이미지를 생성해주세요.')
+          var currentInput = form.find('input[type="text"]');
+          currentInput.removeAttr('disabled');
+          currentInput.val("");
+
+        },
+        success: function() {
           $("#generation-done").after('<img id="generatedImg" src="" class="mBox"/>');
           $("#generatedImg").attr("src", `/sketch?playerId=${playerId}&index=${index + 1}`);
           $("#generatedImg").attr("title", `${prompt}`);
@@ -221,8 +228,6 @@ if (promptsForms?.length > 0) {
 
           $( "#generatedImg" ).remove();
 
-          // hide loader
-          $("#minjkang-loader").addClass('hidden');
           if (index < 2){
             const currentForm = $('#caption' + (index+1));
             currentForm.addClass('submitted');
@@ -240,6 +245,10 @@ if (promptsForms?.length > 0) {
             });
           }
         },
+        complete: function() {
+          // hide loader
+          $("#minjkang-loader").addClass('hidden');
+        }
       });
     });
   })

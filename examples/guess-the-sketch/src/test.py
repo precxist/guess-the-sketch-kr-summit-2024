@@ -7,7 +7,7 @@ vertexai.init(project=PROJECT_ID, location=LOCATION)
 
 imagen = ImageGenerationModel.from_pretrained("imagegeneration@006")
 response = imagen.generate_images(
-    prompt='리트리버',
+    prompt='호랑이',
     number_of_images=1,
     language='ko',
     safety_filter_level="block_few",

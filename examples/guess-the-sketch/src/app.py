@@ -103,7 +103,7 @@ def send_prompt():
         safety_filter_level="block_few",
     )
     image = response.images[0]._pil_image
-    image = image.resize((900, 900))
+    image = image.resize((800, 800))
     image.save(local_path)
 
     # generate embedding and save prompt as json file
@@ -143,9 +143,8 @@ def is_opponent_done_generation():
 def guess():
     player_id = request.args.get('playerId')
     opponent_id = MATCH_DICT[player_id]
-    sketch1 = f"/sketch?playerId={opponent_id}&index=1"
 
-    return render_template('guess.html', sketch1=sketch1)
+    return render_template('guess.html', opponent_id=opponent_id)
 
 
 @app.route('/sketch')

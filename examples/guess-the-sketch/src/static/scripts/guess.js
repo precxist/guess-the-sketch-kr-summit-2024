@@ -255,7 +255,7 @@ if (guessesForms?.length > 0) {
       if (index < 3){
         index += 1
         const nextForm = $("form#guess" + index);
-        nextForm.find(".guesses__img > img").attr("src", `/sketch?playerId=${opponentId}&index=${index}`)
+        // nextForm.find(".guesses__img > img").attr("src", `/sketch?playerId=${opponentId}&index=${index}`)
         nextForm.removeClass('hidden');
       }
       else{
