@@ -7,13 +7,14 @@ vertexai.init(project=PROJECT_ID, location=LOCATION)
 
 imagen = ImageGenerationModel.from_pretrained("imagegeneration@006")
 response = imagen.generate_images(
-    prompt='golden retriever',
+    prompt='리트리버',
     number_of_images=1,
     language='ko',
-    safety_filter_level="block_some",
+    safety_filter_level="block_few",
 )
-    
-# print(response)
-# print(type(response.images[0]))
 
-response.images[0].save('result.png')
+
+image = response.images[0]._pil_image
+# print(type(image))
+image = image.resize((900, 900))
+image.save('result.png')

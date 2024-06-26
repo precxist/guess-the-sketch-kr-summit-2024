@@ -3,6 +3,7 @@ const pageHero = document?.querySelector('.hero')
 const pageHeroPlayer = pageHero.querySelector('.player-tag')
 const exitBtn = document?.getElementById('exitGame')
 const loaderContainer = document?.querySelector('.loader-container')
+const playAgainBtn = document?.getElementById('playAgain')
 
 // get playerId
 const searchParams = new URLSearchParams(window.location.search)
@@ -36,6 +37,14 @@ const unsetLoadingStatePrompt = () => {
     pageHeroPlayer.classList.remove('hidden')
     loaderContainer.classList.remove('loader-container--prompt')
     loaderContainer.classList.add('hidden')
+}
+
+// If Play Again button exists, run click event
+if (playAgainBtn) {
+    playAgainBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+        window.location.href = './?playerId=' + playerId;
+    })
 }
 
 $(document).ready(function() {

@@ -95,16 +95,18 @@ def send_prompt():
     # save image
     local_path = os.path.join(player_dir, f"{index}.png")
     imagen = ImageGenerationModel.from_pretrained("imagegeneration@006")
+
     response = imagen.generate_images(
         prompt=prompt,
         number_of_images=1,
         language='ko',
         safety_filter_level="block_few",
     )
-    response.images[0].save(local_path)
+    image = response.images[0]._pil_image
+    image = image.resize((900, 900))
+    image.save(local_path)
 
     # generate embedding and save prompt as json file
-
     model = TextEmbeddingModel.from_pretrained("text-multilingual-embedding-002")
     inputs = [TextEmbeddingInput(prompt, "SEMANTIC_SIMILARITY")]
     embedding = model.get_embeddings(inputs)[0].values

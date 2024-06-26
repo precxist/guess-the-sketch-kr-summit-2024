@@ -303,4 +303,12 @@ if (guessesForms?.length > 0) {
 // init
 $(document).ready(function() {
   prompts.classList.remove('hidden');
+
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      // console.log();
+      event.preventDefault();
+      return false;
+    }
+  });
 });

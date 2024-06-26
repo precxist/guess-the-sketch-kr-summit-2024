@@ -282,5 +282,12 @@ if (guessesForms?.length > 0) {
 
 // init
 $(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+
   enableGuess($("#guess1"));
 });
