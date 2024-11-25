@@ -259,7 +259,7 @@ if (guessesForms?.length > 0) {
         nextForm.removeClass('hidden');
       }
       else{
-        setLoadingStateGuesses('점수를 계산중입니다...');
+        setLoadingStateGuesses('Calculating scores...');
 
         $.ajax({
           url: "/submit-guess",

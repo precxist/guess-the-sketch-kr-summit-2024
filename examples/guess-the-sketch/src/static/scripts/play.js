@@ -209,11 +209,11 @@ if (promptsForms?.length > 0) {
         beforeSend: function() {
           disablePrompt(form);
           // get value
-          $("#minjkang-loader").find("p").text("이미지 생성중...");
+          $("#minjkang-loader").find("p").text("Generating sketches...");
           $("#minjkang-loader").removeClass('hidden');
         },
         error: function() {
-          alert('세이프티 필터에 의해 이미지가 차단되었습니다. 가급적 사람 이외에 사물, 동물, 풍경 등의 이미지를 생성해주세요.')
+          alert('Error has occurred. Please contact the administrator.')
           var currentInput = form.find('input[type="text"]');
           currentInput.removeAttr('disabled');
           currentInput.val("");
@@ -256,7 +256,7 @@ if (promptsForms?.length > 0) {
 
 $("#generation-done").change(function(){
   if ($("#generation-done").val() == 'y'){
-    setLoadingStatePrompt('상대방을 기다리는 중입니다...')
+    setLoadingStatePrompt('Waiting for the other player...')
 
     setInterval(function () {
       $.ajax({

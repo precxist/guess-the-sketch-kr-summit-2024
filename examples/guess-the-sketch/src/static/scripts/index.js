@@ -11,7 +11,7 @@ const playerId = searchParams.get('playerId')
 if(startGameBtn) {
   startGameBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    setLoadingStateIndex('상대방을 기다리는 중입니다...')
+    setLoadingStateIndex('Waiting for the other player...')
 
     $.ajax({
       url: "/join",

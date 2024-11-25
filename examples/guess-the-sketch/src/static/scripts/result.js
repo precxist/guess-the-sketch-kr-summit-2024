@@ -48,7 +48,7 @@ if (playAgainBtn) {
 }
 
 $(document).ready(function() {
-    setLoadingStatePrompt('결과를 기다리는 중입니다...');
+    setLoadingStatePrompt('Calculating scores...');
 
     // poll for the other player to join
     setInterval(function () {
@@ -87,15 +87,15 @@ $(document).ready(function() {
 
                 if (currentPlayerScore > opponentPlayerScore){
                     // $("p#currentPlayerResultsText").text("You Won!");
-                    $("p#currentPlayerResultsText").text("승리!");
+                    $("p#currentPlayerResultsText").text("You win!");
                 }
                 else if(currentPlayerScore == opponentPlayerScore){
                     // $("p#currentPlayerResultsText").text("It's a Tie!");
-                    $("p#currentPlayerResultsText").text("무승부!");
+                    $("p#currentPlayerResultsText").text("Draw!");
                 }
                 else{
                     // $("p#currentPlayerResultsText").text("You Lost!");
-                    $("p#currentPlayerResultsText").text("패배!");
+                    $("p#currentPlayerResultsText").text("You lose!");
                 }
                 $("span#currentPlayerScore").text(Math.round(currentPlayerScore/3));
                 $("span#opponentPlayerScore").text(Math.round(opponentPlayerScore/3));
