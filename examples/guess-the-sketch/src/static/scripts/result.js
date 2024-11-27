@@ -52,7 +52,7 @@ $(document).ready(function() {
 
     // poll for the other player to join
     setInterval(function () {
-        if (!$("body").addClass("has-results")){
+        if (!$("body").hasClass("has-results")){
             $.ajax({
               url: "/is-result-ready",
               cache: false,
