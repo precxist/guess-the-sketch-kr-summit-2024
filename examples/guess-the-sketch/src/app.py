@@ -144,7 +144,7 @@ def guess():
     player_id = request.args.get('playerId')
     opponent_id = MATCH_DICT[player_id]
 
-    return render_template('guess.html', opponent_id=opponent_id)
+    return render_template('guess.html', playerId=player_id, opponentId=opponent_id)
 
 
 @app.route('/sketch')
