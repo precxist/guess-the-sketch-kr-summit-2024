@@ -139,7 +139,7 @@ def guess():
     player_id = request.args.get('playerId')
     opponent_id = MATCH_DICT[player_id]
 
-    return render_template('guess.html', opponent_id=opponent_id)
+    return render_template('guess.html', playerId=player_id, opponentId=opponent_id)
 
 
 @app.route('/sketch')
@@ -166,7 +166,7 @@ def submit_guess():
     os.makedirs(opponent_dir, exist_ok=True)
 
     # generate embedding and save prompt as json file
-    model = TextEmbeddingModel.from_pretrained("text-embedding-004")
+    model = TextEmbeddingModel.from_pretrained("text-embedding-005")
     inputs = [TextEmbeddingInput(guess, "SEMANTIC_SIMILARITY") for guess in guesses]
     embeddings = model.get_embeddings(inputs)
 
