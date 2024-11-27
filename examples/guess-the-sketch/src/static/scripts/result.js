@@ -52,59 +52,61 @@ $(document).ready(function() {
 
     // poll for the other player to join
     setInterval(function () {
-        $.ajax({
-          url: "/is-result-ready",
-          cache: false,
-          data:{playerId: playerId},
-          success: function(data){
-            if (data.ready){
-                $("body").addClass("has-results");
-                const currentPlayerResult = data.current_player_result;
-                const opponentResult = data.opponent_result;
-
-                const currentPlayer = data.current_player;
-                const opponentId = data.opponent_id;
-
-                $("span#currentPlayer").text("Player " + currentPlayer);
-                $("span#opponentPlayer").text("Player " + opponentId);
-
-                var currentPlayerScore = 0;
-                var opponentPlayerScore = 0;
-
-                for (let i=1; i<=3; i++) {
-                    $("p#opponentPlayerPrompt" + i).text(opponentResult[i].prompt);
-                    $("img#opponentPlayerPromptImg" + i).attr("src", opponentResult[i].sketch);
-                    $("p#currentPlayerGuess" + i).text(opponentResult[i].guess);
-                    $("span#currentPlayerScore" + i).text(opponentResult[i].score + "%");
-                    currentPlayerScore += opponentResult[i].score;
-
-                    $("p#currentPlayerPrompt" + i).text(currentPlayerResult[i].prompt);
-                    $("img#currentPlayerPromptImg" + i).attr("src", currentPlayerResult[i].sketch);
-                    $("p#opponentPlayerGuess" + i).text(currentPlayerResult[i].guess);
-                    $("span#opponentPlayerScore" + i).text(currentPlayerResult[i].score + "%");
-                    opponentPlayerScore += currentPlayerResult[i].score;
+        if (!$("body").addClass("has-results")){
+            $.ajax({
+              url: "/is-result-ready",
+              cache: false,
+              data:{playerId: playerId},
+              success: function(data){
+                if (data.ready){
+                    $("body").addClass("has-results");
+                    const currentPlayerResult = data.current_player_result;
+                    const opponentResult = data.opponent_result;
+    
+                    const currentPlayer = data.current_player;
+                    const opponentId = data.opponent_id;
+    
+                    $("span#currentPlayer").text("Player " + currentPlayer);
+                    $("span#opponentPlayer").text("Player " + opponentId);
+    
+                    var currentPlayerScore = 0;
+                    var opponentPlayerScore = 0;
+    
+                    for (let i=1; i<=3; i++) {
+                        $("p#opponentPlayerPrompt" + i).text(opponentResult[i].prompt);
+                        $("img#opponentPlayerPromptImg" + i).attr("src", opponentResult[i].sketch);
+                        $("p#currentPlayerGuess" + i).text(opponentResult[i].guess);
+                        $("span#currentPlayerScore" + i).text(opponentResult[i].score + "%");
+                        currentPlayerScore += opponentResult[i].score;
+    
+                        $("p#currentPlayerPrompt" + i).text(currentPlayerResult[i].prompt);
+                        $("img#currentPlayerPromptImg" + i).attr("src", currentPlayerResult[i].sketch);
+                        $("p#opponentPlayerGuess" + i).text(currentPlayerResult[i].guess);
+                        $("span#opponentPlayerScore" + i).text(currentPlayerResult[i].score + "%");
+                        opponentPlayerScore += currentPlayerResult[i].score;
+                    }
+    
+                    if (currentPlayerScore > opponentPlayerScore){
+                        // $("p#currentPlayerResultsText").text("You Won!");
+                        $("p#currentPlayerResultsText").text("You win!");
+                    }
+                    else if(currentPlayerScore == opponentPlayerScore){
+                        // $("p#currentPlayerResultsText").text("It's a Tie!");
+                        $("p#currentPlayerResultsText").text("Draw!");
+                    }
+                    else{
+                        // $("p#currentPlayerResultsText").text("You Lost!");
+                        $("p#currentPlayerResultsText").text("You lose!");
+                    }
+                    $("span#currentPlayerScore").text(Math.round(currentPlayerScore/3));
+                    $("span#opponentPlayerScore").text(Math.round(opponentPlayerScore/3));
+                    
+                    $("div.results").removeClass("hidden");
+                    unsetLoadingStatePrompt();
                 }
-
-                if (currentPlayerScore > opponentPlayerScore){
-                    // $("p#currentPlayerResultsText").text("You Won!");
-                    $("p#currentPlayerResultsText").text("You win!");
-                }
-                else if(currentPlayerScore == opponentPlayerScore){
-                    // $("p#currentPlayerResultsText").text("It's a Tie!");
-                    $("p#currentPlayerResultsText").text("Draw!");
-                }
-                else{
-                    // $("p#currentPlayerResultsText").text("You Lost!");
-                    $("p#currentPlayerResultsText").text("You lose!");
-                }
-                $("span#currentPlayerScore").text(Math.round(currentPlayerScore/3));
-                $("span#opponentPlayerScore").text(Math.round(opponentPlayerScore/3));
-                
-                $("div.results").removeClass("hidden");
-                unsetLoadingStatePrompt();
-            }
-          }
-        });
+              }
+            });
+        }
     }, 1000);
     // enableGuess($("#guess1"));
 });
