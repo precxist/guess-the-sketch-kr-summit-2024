@@ -29,6 +29,7 @@ from flask import send_file
 from vertexai.preview.vision_models import ImageGenerationModel
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from PIL import Image
+from io import BytesIO
 
 PROJECT_ID = "minjkang-default"  # @param {type:"string"}
 LOCATION = "asia-southeast1"  # @param {type:"string"}
