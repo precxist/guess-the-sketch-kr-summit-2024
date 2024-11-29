@@ -96,8 +96,8 @@ def send_prompt():
     # save image
     local_path = os.path.join(player_dir, f"{index}.png")
     url="http://localhost:8000/generate"
-    data = {'prompt': prompt}
-    result = requests.post(url, json = data)
+    
+    result = requests.post(url, json={'prompt': prompt}, timeout=60)
     image = Image.open(BytesIO(result.content))
     image = image.resize((800, 800))
     image.save(local_path)
