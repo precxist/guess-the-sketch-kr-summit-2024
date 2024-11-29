@@ -5,7 +5,7 @@ services:
     build: .
     volumes:
       - ./src:/workspace/frontend
-      - /home/minjkang/.config/gcloud:/root/.config/gcloud
+      - /home/minjkang_google_com/.config/gcloud:/root/.config/gcloud
     restart: unless-stopped
     network_mode: host
     
