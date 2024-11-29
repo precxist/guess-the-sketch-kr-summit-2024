@@ -94,10 +94,10 @@ def send_prompt():
 
     # save image
     local_path = os.path.join(player_dir, f"{index}.png")
-    
-    # temp
-    url = "https://i1.sndcdn.com/avatars-000389897325-h3s225-t500x500.jpg"
-    image = Image.open(requests.get(url, stream=True).raw)
+    url="http://localhost:8000/generate"
+    data = {'prompt': prompt}
+    result = requests.post(url, json = data)
+    image = Image.open(BytesIO(result.content))
     image = image.resize((800, 800))
     image.save(local_path)
 
