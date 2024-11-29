@@ -31,8 +31,8 @@ from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from PIL import Image
 from io import BytesIO
 
-PROJECT_ID = "minjkang-default"  # @param {type:"string"}
-LOCATION = "asia-southeast1"  # @param {type:"string"}
+PROJECT_ID = "tpu-launchpad-playground"  # @param {type:"string"}
+LOCATION = "us-central1"  # @param {type:"string"}
 vertexai.init(project=PROJECT_ID, location=LOCATION)
 
 DB_DIR = "/tmp/db"
