@@ -28,7 +28,7 @@
             <!-- Intro content -->
             <div class="intro__content">
               <p>Play Guess the Sketch!<br>
-                Powered by Imagen, Vertex AI's image generation model. Are you ready to play a generative AI quiz game?
+                Powered by Trillium (6th Generation TPUs), GKE and Vertex AI. Are you ready to play a generative AI quiz game?
               </p>
               <a href="/" class="button" id="startGame">Start Game</a>
             </div>
@@ -41,13 +41,15 @@
           <div class="intro__steps">
             <div class="intro__step">
               <span>Step 1</span>
-              <p>Ask Imagen, the image generation AI, to generate sketches with your own prompts. </p>
+              <p>Ask the SDXL model served by TPUs running on GKE to generate sketches with your own prompts. </p>
             </div>
             <div class="intro__step">
               <span>Step 2</span>
-              <p>Look at the other person's sketch and guess what prompt they entered! <br>
-                Be careful not to include any sensitive information such as personal information in the prompt.
-              </p>
+              <p>Look at the other person's sketch and guess what prompt they entered. </p>
+            </div>
+            <div class="intro__step">
+              <span>Step 3</span>
+              <p>Vertex embedding API will calculate the similarity of your answers vs the original prompts and pick the winner! </p>
             </div>
           </div>
         </div>
