@@ -63,7 +63,9 @@ def index():
 def join():
     player_id = request.args.get('playerId')
     player_dir = os.path.join(DB_DIR, f"p{player_id}")
-    os.makedirs(player_dir, exist_ok=True)
+
+    if player_id == 1 or player_id == 2: 
+        os.makedirs(player_dir, exist_ok=True)
     return jsonify(status="success")
 
 # POST is-opponent-joined
