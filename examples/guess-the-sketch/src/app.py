@@ -61,7 +61,7 @@ def index():
 # POST join
 @app.route('/join')
 def join():
-    player_id = request.args.get('playerId')
+    player_id = request.args.get('playerId', type=int)
     player_dir = os.path.join(DB_DIR, f"p{player_id}")
 
     if player_id == 1 or player_id == 2: 
